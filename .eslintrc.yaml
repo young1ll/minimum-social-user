@@ -1,0 +1,45 @@
+---
+extends:
+  - airbnb-base
+  - plugin:prettier/recommended
+  - plugin:@typescript-eslint/eslint-recommended
+  - plugin:@typescript-eslint/recommended
+
+plugins:
+  - '@typescript-eslint'
+
+parser: '@typescript-eslint/parser'
+
+env:
+  es6: true
+  browser: true
+  jest: true
+
+ignorePatterns:
+  - node_modules/
+
+settings:
+  'import/resolver':
+    typescript: {}
+
+rules:
+  no-console: off
+  prettier/prettier:
+    - error
+    - endOfLine: auto
+  brace-style:
+    - error
+    - stroustrup
+  comma-dangle:
+    - error
+    - always-multiline
+  no-unused-vars:
+    - warn
+  import/extensions:
+    - error
+    - js: never
+  import/prefer-default-export:
+    - off
+  import/no-extraneous-dependencies:
+    - error
+    - devDependencies: true
