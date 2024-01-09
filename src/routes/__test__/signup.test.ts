@@ -90,3 +90,33 @@ describe('Test Validity of Password', () => {
       .expect(200);
   });
 });
+
+describe('Test Sanitization of Email input', () => {
+  const normalizeEmail = 'test@test.com';
+
+  it('Return 200 if the email is sanitized', async () => {
+    const response = await request(app)
+      .post(SIGNUP_ROUTE)
+      .send({
+        email: 'test@TEST.COM',
+        password: 'validPassw0rd',
+      })
+      .expect(200);
+
+    expect(response.body.email).toEqual(normalizeEmail);
+  });
+});
+
+describe('Test Sanitization of Password input', () => {
+  const normalizedPassword = 'validP@ssw0rd';
+
+  it('Return 200 if the password is sanitized', async () => {
+    await request(app)
+      .post(SIGNUP_ROUTE)
+      .send({
+        email: '2vqz0@example.com',
+        password: normalizedPassword,
+      })
+      .expect(200);
+  });
+});

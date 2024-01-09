@@ -7,7 +7,11 @@ export const SIGNUP_ROUTE = '/api/auth/signup';
 signUpRouter.post(
   SIGNUP_ROUTE,
   [
-    body('email').trim().isEmail().withMessage('Email must be valid'),
+    body('email')
+      .trim()
+      .isEmail()
+      .withMessage('Email must be valid')
+      .normalizeEmail(),
     body('password')
       .trim()
       .isLength({ min: 6, max: 32 })
@@ -21,14 +25,24 @@ signUpRouter.post(
     body('password')
       .matches(/^(.*\d.*)$/)
       .withMessage('Password must contain at least one number'),
+    body('password').escape(),
   ],
   (req: Request, res: Response) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      res.status(422).send({});
+      res.sendStatus(422);
     }
-    res.send({});
+
+    if (/.*@[A-Z]/g.test(req.body.email)) {
+      res.sendStatus(422);
+    }
+
+    if (/[><'"/]/g.test(req.body.password)) {
+      res.sendStatus(422);
+    }
+
+    res.send({ email: req.body.email });
   },
 );
 
