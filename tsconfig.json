@@ -4,6 +4,8 @@
     "module": "commonjs",
     "rootDir": "./",
     "outDir": "./build",
+    "baseUrl": "./src",
+    "paths": { "@/*": ["./src/*"] },
     "isolatedModules": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
