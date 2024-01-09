@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-# {subtaskTitle}-{parentTaskLink}
+- {subtaskTitle}-{parentTaskLink}
 
 ## In a Nutshells
 
