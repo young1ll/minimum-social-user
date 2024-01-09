@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "main": "./src/app.ts",
   "scripts": {
-    "lint": "eslint ./src/**/*.{ts,js}",
-    "lint:fix": "eslint ./src/**/*.{ts,js} --fix",
+    "lint": "eslint src/**/*.{ts,js}",
+    "lint:fix": "eslint src/**/*.{ts,js} --fix",
     "prettier": "echo checking prettier formatting",
-    "dev": "nodemon ./src/app.ts",
+    "dev": "nodemon src/app.ts",
     "start": "echo starting server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -36,13 +36,8 @@
   },
   "lint-staged": {
     "src/**/*.ts": [
-      "eslint ./src/**/*.{ts,js} --fix",
+      "npm run lint:fix",
       "git add"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }
