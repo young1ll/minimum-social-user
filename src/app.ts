@@ -1,10 +1,10 @@
-import express from 'express';
+import e from 'express';
 import { signUpRouter } from './routes';
 
 // intializing
-const app = express();
+const app = e();
 
-app.use(express.json());
+app.use(e.json());
 
 // routes
 app.use(signUpRouter);

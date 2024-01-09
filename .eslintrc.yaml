@@ -24,6 +24,8 @@ settings:
 
 rules:
   no-console: off
+  no-unused-vars: off
+  '@typescript-eslint/no-unused-vars': off
   prettier/prettier:
     - error
     - endOfLine: auto
@@ -33,8 +35,6 @@ rules:
   comma-dangle:
     - error
     - always-multiline
-  no-unused-vars:
-    - warn
   import/extensions:
     - error
     - js: never
