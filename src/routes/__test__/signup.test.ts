@@ -15,15 +15,28 @@ describe('Test Signup route availability', () => {
     password = 'validPassw0rd';
   });
 
-  it('Return 405 for signup non-POST requests', async () => {
+  it('Return 405 for signup non-POST(GET, PUT, PATCH, DELETE) requests', async () => {
     await request(app).get(SIGNUP_ROUTE).expect(405);
     await request(app).put(SIGNUP_ROUTE).expect(405);
     await request(app).patch(SIGNUP_ROUTE).expect(405);
     await request(app).delete(SIGNUP_ROUTE).expect(405);
   });
 
-  it('Return 200 for signup POST requests', async () => {
+  it('Return 200 for signup POST, OPTIONS requests', async () => {
     await request(app).post(SIGNUP_ROUTE).send({ email, password }).expect(200);
+    await request(app)
+      .options(SIGNUP_ROUTE)
+      .send({ email, password })
+      .expect(200);
+  });
+
+  it('Return POST only allowed methods from an OPTIONS request', async () => {
+    const response = await request(app)
+      .options(SIGNUP_ROUTE)
+      .send({ email, password })
+      .expect(200);
+
+    expect(response.headers['access-control-allow-methods']).toBe('POST');
   });
 });
 

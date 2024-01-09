@@ -1,3 +1,4 @@
+import { handleMethodNotAllowed } from '@/routes/utils';
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 
@@ -32,8 +33,19 @@ signUpRouter.post(
   },
 );
 
-signUpRouter.all(SIGNUP_ROUTE, (req: Request, res: Response) => {
-  res.status(405).send({});
+signUpRouter.options(SIGNUP_ROUTE, (req: Request, res: Response) => {
+  res.header('Access-Control-Allow-Origin', '*'); // 원하는 도메인으로 설정
+  res.header('Access-Control-Allow-Methods', 'POST');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, Content-Length, X-Requested-With',
+  );
+  res.sendStatus(200);
 });
+
+signUpRouter.get(SIGNUP_ROUTE, handleMethodNotAllowed);
+signUpRouter.put(SIGNUP_ROUTE, handleMethodNotAllowed);
+signUpRouter.patch(SIGNUP_ROUTE, handleMethodNotAllowed);
+signUpRouter.delete(SIGNUP_ROUTE, handleMethodNotAllowed);
 
 export default signUpRouter;
