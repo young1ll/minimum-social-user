@@ -1,11 +1,10 @@
 import express from 'express';
 
+// intializing
 const app = express();
 
 app.get('*', (req, res) => {
-  res.send('helloworld');
+  res.status(200).send('helloworld');
 });
 
-app.listen(3000, () => {
-  console.log('server is running on port 3000');
-});
+export default app;
