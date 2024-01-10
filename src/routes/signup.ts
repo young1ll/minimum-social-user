@@ -1,13 +1,19 @@
+import { SignUpController } from '@/controllers/auth-controller';
 import { User } from '@/models';
 import e, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 
-const signUpRouter = e.Router();
+const SignUpRouter = e.Router();
 export const SIGNUP_ROUTE = '/api/auth/signup';
 
-signUpRouter.post(
+SignUpRouter.get(SIGNUP_ROUTE, (req: Request, res: Response) => {
+  res.send({ message: 'minimum-socials auth-server is running' });
+});
+
+SignUpRouter.post(
   SIGNUP_ROUTE,
   [
+    body('username'),
     body('email')
       .trim()
       .isEmail()
@@ -23,38 +29,7 @@ signUpRouter.post(
       )
       .escape(),
   ],
-  async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.sendStatus(422);
-    }
-
-    if (/.*@[A-Z]/g.test(req.body.email)) {
-      return res.sendStatus(422);
-    }
-
-    if (/[><'"/]/g.test(req.body.password)) {
-      return res.sendStatus(422);
-    }
-
-    const { email, password } = req.body;
-
-    // case1: DB에서 사용자 조회
-    const existingUser = await User.findOne({ email });
-
-    if (existingUser) {
-      return res.sendStatus(422);
-    }
-
-    // case2: DB에 사용자 저장
-    const newUser = new User({
-      email,
-      password,
-    }).save();
-
-    return res.send({ email: req.body.email });
-  },
+  SignUpController,
 );
 
-export default signUpRouter;
+export default SignUpRouter;

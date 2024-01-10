@@ -2,16 +2,20 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "commonjs",
-    "rootDir": "./",
+    "preserveValueImports": false,
+    "rootDir": ".",
     "outDir": "./build",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["src/*"]
     },
     "isolatedModules": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   }
 }

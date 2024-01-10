@@ -24,6 +24,7 @@ settings:
 
 rules:
   no-console: off
+  no-underscore-dangle: off
   no-unused-vars: off
   '@typescript-eslint/no-unused-vars': off
   prettier/prettier:
@@ -31,7 +32,7 @@ rules:
     - endOfLine: auto
   brace-style:
     - error
-    - stroustrup
+    - 1tbs
   comma-dangle:
     - error
     - always-multiline
