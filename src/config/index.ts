@@ -15,6 +15,7 @@ export default {
   databaseURL: process.env.DATABASE_URL,
   mailgun: {
     adminEmail: process.env.ADMIN_EMAIL,
+    testEmail: process.env.TEST_EMAIL,
     apiKey: process.env.MAILGUN_API_PRIVATE,
     domain: process.env.MAILGUN_DOMAIN,
   },
