@@ -1,12 +1,12 @@
 import { BaseAuthEvent } from './base-event';
 import { UserDocument } from '../models';
 
-export type UserSignedUpRestPayload = {
+export type SignUpRestPayload = {
   id: string;
   email: string;
 };
 
-export default class UserSignedUpEv extends BaseAuthEvent<UserSignedUpRestPayload> {
+export default class EventSignedUp extends BaseAuthEvent<SignUpRestPayload> {
   private user: UserDocument;
 
   private statusCode = 201;
@@ -20,7 +20,7 @@ export default class UserSignedUpEv extends BaseAuthEvent<UserSignedUpRestPayloa
     return this.statusCode;
   }
 
-  serializeRest(): UserSignedUpRestPayload {
+  serializeRest(): SignUpRestPayload {
     return {
       id: this.user._id,
       email: this.user.email,
