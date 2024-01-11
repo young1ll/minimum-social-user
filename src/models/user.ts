@@ -1,8 +1,17 @@
-import mongoose, { CallbackError, Document, Model } from 'mongoose';
+/**
+ * User Model
+ * 사용자 핵심정보만 취급하고, Sequelize 또는 TypedORM으로 연결(예정)
+ * UserDetail Model과 연결
+ */
+import mongoose, { Document, Model } from 'mongoose';
 import bcrypt from 'bcrypt';
+import { defaultHash } from '@/utils/default-hash';
 
 export interface IUser {
   username: string;
+  // nickname: string;
+  // phone: string;
+  // profileImage: string;
   email: string;
   password: string;
 }
@@ -16,6 +25,19 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  // nickname: {
+  //   type: String,
+  //   required: true,
+  //   unique: true,
+  // },
+  // phone: {
+  //   type: String,
+  //   unique: true,
+  // },
+  // profileImage: {
+  //   type: String,
+  //   required: true,
+  // },
   email: {
     type: String,
     required: true,
@@ -26,21 +48,18 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 });
+userSchema.index({ email: 'text', username: 'text' });
 
 userSchema.pre<UserDocument>('save', async function preUserSave(next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; // Schema
 
   if (!user.isModified('password')) {
-    // 비밀번호 변경 없으면 next();
     return next();
   }
 
   try {
-    const saltRounds = 12; // salt rounds
-    const salt = await bcrypt.genSalt(saltRounds); // salt 추가
-    const hashed = await bcrypt.hash(user.password, salt); // hash
-    this.password = hashed;
+    user.password = await defaultHash({ password: user.password });
     return next();
   } catch (err) {
     if (err instanceof Error) {
