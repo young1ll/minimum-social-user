@@ -6,7 +6,7 @@ describe('MailgunService/', () => {
     apiKey: config.mailgun.apiKey!,
   });
   it('constructor/ should construct MailgunService correctly', () => {
-    console.log(mailgunService);
+    // console.log(mailgunService);
     expect(mailgunService).toBeDefined();
   });
 
@@ -20,6 +20,6 @@ describe('MailgunService/', () => {
     };
     const response = await mailgunService.sendMailFromAdmin(data);
 
-    console.log(`mailgun response: ${response}`);
+    console.log(`mailgun response: ${JSON.stringify(response)}`);
   });
 });

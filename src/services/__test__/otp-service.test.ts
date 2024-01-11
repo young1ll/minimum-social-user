@@ -8,7 +8,7 @@ describe('OTPService/', () => {
 
     const result = await otpService.generateOTP(email);
 
-    console.log(`generated otp: ${result.otp}`);
+    // console.log(`generated otp: ${result.otp}`);
     // 결과
     expect(result).toBeTruthy();
     expect(result.email).toBe(email);
@@ -39,7 +39,7 @@ describe('OTPService/', () => {
   it('verifyOtpByEmail/ should return false if OTP is invalid for the given email', async () => {
     const email = 'test@example';
     const wrongOtp = '123456';
-    const response = await otpService.generateOTP(email);
+    await otpService.generateOTP(email);
 
     const result = await otpService.verifyOtpByEmail({
       email,

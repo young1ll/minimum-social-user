@@ -1,4 +1,3 @@
-import mailSender from '@/utils/mail-sender';
 import mongoose, { Document, Model } from 'mongoose';
 
 export interface IOtp {
