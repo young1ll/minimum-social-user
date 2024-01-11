@@ -1,19 +1,14 @@
-import { SignUpController } from '@/controllers/auth-controller';
-import { User } from '@/models';
-import e, { Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import { SignUpController } from '@/controllers';
+import { Router } from 'express';
+import { body } from 'express-validator';
 
-const SignUpRouter = e.Router();
 export const SIGNUP_ROUTE = '/api/auth/signup';
-
-SignUpRouter.get(SIGNUP_ROUTE, (req: Request, res: Response) => {
-  res.send({ message: 'minimum-socials auth-server is running' });
-});
+const SignUpRouter = Router();
 
 SignUpRouter.post(
   SIGNUP_ROUTE,
   [
-    body('username'),
+    body('username').trim(),
     body('email')
       .trim()
       .isEmail()

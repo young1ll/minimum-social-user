@@ -1,11 +1,11 @@
 import request from 'supertest';
 import { UserService } from '@/services';
 import app from '@/app';
-import { SIGNUP_ROUTE } from '@/routes/signup';
 import { User } from '@/models';
+import { SIGNUP_ROUTE } from '@/routes/signup';
 
 // TODO: CASE를 더 세분화
-describe(`SignUpController/ ${SIGNUP_ROUTE}`, () => {
+describe(`POST SignUpController/ ${SIGNUP_ROUTE}`, () => {
   // MongoMemoryServer 설정: ./utils/test-env.ts, jest.config.ts-"setupFilesAfterEnv"
 
   const INVALID_USERNAME = 'invalidUsername'; // 사용자 이름 형식 오류(현재 적용 안됨)

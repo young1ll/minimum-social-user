@@ -1,8 +1,13 @@
+import config from '@/config';
 import app from './app';
 
-// TODO port from .env
-const port = process.env.PORT || 3000;
+async function startServer() {
+  console.log(config.env);
+  console.log(config.test);
 
-app.listen(port, () => {
-  console.log(`server is running on port ${port}`);
-});
+  app.listen(config.port, () => {
+    console.log(`server is running on port ${config.port}`);
+  });
+}
+
+startServer();

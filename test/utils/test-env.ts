@@ -19,7 +19,7 @@ beforeEach(async () => {
   // for (let collection of allCollections) {
   //   await collection.deleteMany({});
   // }
-  // eslint iterators/generators require regenerator-runtime에서 위 코드 제한
+  // eslint iterators/generators require regenerator-runtime에서 위 코드 제한: 아래와 같이 수정
   await Promise.all(
     allCollections.map(async (collection) => {
       await collection.deleteMany({});
