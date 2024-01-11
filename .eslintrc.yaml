@@ -27,6 +27,7 @@ rules:
   no-underscore-dangle: off
   no-unused-vars: off
   '@typescript-eslint/no-unused-vars': off
+  no-plusplus: off
   prettier/prettier:
     - error
     - endOfLine: auto
