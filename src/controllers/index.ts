@@ -1,2 +1,3 @@
 export { SignUpController } from './signup-controller';
-export { OtpController } from './otp-controller';
+export * as OtpController from './otp-controller';
+export * as UserContoller from './user-controller';

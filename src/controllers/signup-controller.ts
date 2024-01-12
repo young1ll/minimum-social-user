@@ -1,6 +1,5 @@
 import config from '@/config';
-import InvalidInputError from '@/errors/invalid-error';
-import { UserSignedUpEv } from '@/event';
+
 import { UserService } from '@/services';
 import MailgunService from '@/services/mailgun-service';
 import NodeMailerService from '@/services/nodemailer-service';
@@ -16,34 +15,39 @@ const mailgunService = new MailgunService({
 });
 const nodemailerService = new NodeMailerService();
 
-const sendMailgunWithOtp = async ({
-  userId,
-  email,
-}: {
-  userId: string;
-  email: string;
-}) => {
-  // OTP 생성
-  const otpResponse = await otpService.generateOTP({ userId });
-  if (!otpResponse) {
-    throw new Error('Error generating OTP.');
-  }
+/**
+ * - 현재 사용하지 않음
+ * - 무료 제한
+ * nodemailer로 대체
+ */
+// const sendMailgunWithOtp = async ({
+//   userId,
+//   email,
+// }: {
+//   userId: string;
+//   email: string;
+// }) => {
+//   // OTP 생성
+//   const otpResponse = await otpService.generateOTP({ userId });
+//   if (!otpResponse) {
+//     throw new Error('Error generating OTP.');
+//   }
 
-  const welcomeMail = {
-    domain: config.mailer.mg_domain!,
-    fromEmail: config.mailer.adminEmail!,
-    toEmail: email,
-    subject: '[minimum-socials] 회원 가입 인증 메일',
-    message: `
-    <h1>Welcome!</h1>
-    <h2>OTP를 확인해주세요</h2>
-    <p>Your verification code is: ${otpResponse.otp}</p>
-    <p>제한 시간: 5분</p>
-    `,
-  };
-  // 이메일 전송
-  await mailgunService.sendMailFromAdmin(welcomeMail);
-};
+//   const welcomeMail = {
+//     domain: config.mailer.mg_domain!,
+//     fromEmail: config.mailer.adminEmail!,
+//     toEmail: email,
+//     subject: '[minimum-socials] 회원 가입 인증 메일',
+//     message: `
+//     <h1>Welcome!</h1>
+//     <h2>OTP를 확인해주세요</h2>
+//     <p>Your verification code is: ${otpResponse.otp}</p>
+//     <p>제한 시간: 5분</p>
+//     `,
+//   };
+//   // 이메일 전송
+//   await mailgunService.sendMailFromAdmin(welcomeMail);
+// };
 
 const sendNodemailerWithOtp = async ({
   userId,
@@ -52,11 +56,16 @@ const sendNodemailerWithOtp = async ({
   userId: string;
   email: string;
 }) => {
-  // OTP 생성
+  // OTP 생성 #3 #10
   const otpResponse = await otpService.generateOTP({ userId });
   if (!otpResponse) {
     throw new Error('Error generating OTP.');
   }
+
+  const encodedToken = Buffer.from(otpResponse.otp).toString('base64');
+  const encodedEmail = Buffer.from(email).toString('base64');
+
+  console.log(otpResponse.expiresAt);
 
   const welcomeMail = {
     toEmail: email,
@@ -65,18 +74,25 @@ const sendNodemailerWithOtp = async ({
     <h1>Welcome!</h1>
     <h2>OTP를 확인해주세요</h2>
     <p>Your verification code is: ${otpResponse.otp}</p>
-    <p>제한 시간: 5분</p>
+    <p><a href="http://localhost:3000/api/auth/verify/${encodedEmail}/${encodedToken}/otp">Click here</a></p>
+    <p>expires: ${otpResponse.expiresAt.toLocaleString()}</p>
     `,
   };
   // 이메일 전송
   await nodemailerService.sendEmail(welcomeMail);
 };
 
+/**
+ * Handles the sign-up request and creates a new user. #4
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @return {Promise<void>} A promise that resolves when the user is created successfully or rejects with an error.
+ */
 export const SignUpController = async (req: Request, res: Response) => {
-  const errors = validationResult(req).array();
-
-  if (errors.length > 0) {
-    throw new InvalidInputError(errors);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors });
   }
 
   try {
@@ -103,18 +119,12 @@ export const SignUpController = async (req: Request, res: Response) => {
     await sendNodemailerWithOtp({ email, userId: newUser._id });
 
     // Event: 회원 생성 성공
-    const signupEvent = new UserSignedUpEv(newUser!);
-    // return res
-    //   .status(signupEvent.getStatusCode())
-    //   .send(signupEvent.serializeRest());
     return res.status(200).send({
-      _id: newUser._id,
-      email: newUser.email,
-      username: newUser.username,
-      otp: signupEvent.getOtp(),
+      user: newUser,
+      // otp: signupEvent.getOtp(),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({ error: 'Internal server error.' });
   }
 };

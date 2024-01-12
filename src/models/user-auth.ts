@@ -3,12 +3,8 @@
  * 사용자 핵심정보만 취급하고, Sequelize 또는 TypedORM으로 연결(예정)
  * UserDetail Model과 연결
  */
-import mongoose, {
-  CallbackWithoutResultAndOptionalError,
-  Document,
-  Model,
-  Query,
-} from 'mongoose';
+import mongoose, { Document, Model } from 'mongoose';
+import { OTP, OtpDocument } from '@/models';
 import { defaultHash } from '@/utils/default-hash';
 
 export interface IUser {
@@ -18,6 +14,7 @@ export interface IUser {
   // profileImage: string;
   email: string;
   password: string;
+  verified?: boolean;
 }
 
 export interface UserDocument extends IUser, Document {}
@@ -63,16 +60,16 @@ userSchema.index({ email: 'text', username: 'text' });
 
 // 생성, 업데이트 시 pre-hook 실행 #8
 userSchema.pre<UserDocument>('save', async function preFunc(next) {
-  if (!this.isModified('password') || this.isNew) {
+  if (!this.isModified('password') || !this.isNew) {
     return next();
   }
 
   try {
     this.password = await defaultHash({ password: this.password });
     return next();
-  } catch (err) {
-    if (err instanceof Error) {
-      return next(err);
+  } catch (error) {
+    if (error instanceof Error) {
+      return next(error);
     }
     // TODO: report Error Exception
     return next();

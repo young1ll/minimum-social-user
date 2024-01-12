@@ -40,7 +40,7 @@ describe('SignUpController', () => {
         email: config.mailer.testEmail!,
         password: 'testPassword', // invalid
       });
-      // console.log(response.status);
+
       expect(response.status).toBe(422);
     });
 
@@ -86,8 +86,8 @@ describe('SignUpController', () => {
         otp: response.body.otp,
       });
 
-      console.log(response.body.otp);
-      console.log(verifyResponse.body.otp);
+      // console.log(response.body.otp);
+      // console.log(verifyResponse.body.otp);
       expect(response.body.otp === verifyResponse.body.otp).toBe(true);
       expect(response.status).toBe(201);
     });

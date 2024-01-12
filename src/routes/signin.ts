@@ -3,9 +3,9 @@ import {
   emailValidation,
   passwordValidation,
 } from '@/middleware/validate-request';
+import { SIGNIN_ROUTE } from '@/routes/definitions';
 import { Response, Request, Router } from 'express';
 
-export const SIGNIN_ROUTE = '/api/auth/signin';
 const SignInRouter = Router();
 
 SignInRouter.post(

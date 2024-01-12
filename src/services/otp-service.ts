@@ -36,17 +36,33 @@ export default class OTPService {
     return otp;
   }
 
+  /**
+   * -> parms: userId, otp
+   * -> userEmail
+   * -> user
+   * -> user verification
+   */
   async verifyOtpById({ userId, otp }: otpPayloadType) {
     try {
+      // 검사
+      // console.log({
+      //   verifyOtpById: {
+      //     userId,
+      //     otp,
+      //   },
+      // });
+
       const recentOtp = await this.OTPRepository.findRecentOtpById(userId);
 
-      if (recentOtp && recentOtp.otp === otp) {
+      console.log({ recentOtp: { recentOtp } });
+
+      if (recentOtp && recentOtp.otp.toString() === otp.toString()) {
         return { otp, verified: true }; // 유효한 OTP인 경우
       }
 
       return { verifed: false }; // 유효하지 않은 OTP인 경우
     } catch (error) {
-      throw new Error('error occurred while verifying OTP');
+      throw new Error(`error occurred while verifying OTP: ${error}`);
     }
   }
 }

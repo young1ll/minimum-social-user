@@ -1,4 +1,3 @@
-import InvalidInputError from '@/errors/invalid-error';
 import { NextFunction, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 
@@ -55,7 +54,7 @@ export const ValidateReturn = (
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return new InvalidInputError(errors.array());
+    return res.status(422).json({ errors: errors.array() });
   }
   return next();
 };

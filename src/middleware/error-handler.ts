@@ -1,19 +1,16 @@
-import { BaseCustomError } from '@/errors';
 import { Request, Response, NextFunction } from 'express';
 
 const errorHandler = (
-  err: Error,
+  err: Error, // throw를 만나서 도달
   _req: Request,
   res: Response,
   _next: NextFunction,
 ): Response => {
-  if (err instanceof BaseCustomError) {
-    return res
-      .status(err.getStatusCode())
-      .send({ errors: err.serializeErrors() });
-  }
+  // if (err instanceof BaseCustomError) {
 
-  return res.sendStatus(500);
+  // }
+
+  return res.sendStatus(500); // 항상 500을 반환
 };
 
 export default errorHandler;

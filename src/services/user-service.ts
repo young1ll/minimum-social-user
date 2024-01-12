@@ -1,4 +1,3 @@
-import DatabaseError from '@/errors/db-error';
 import { IUser, User, UserDocument } from '@/models';
 import { MongoDBUserRepository } from '@/repositories';
 
@@ -9,6 +8,9 @@ export default class UserService {
     this.UserRepository = new MongoDBUserRepository(User);
   }
 
+  /**
+   * Creates a new user in the database. #7
+   */
   async createUser(userData: Partial<IUser>): Promise<UserDocument | null> {
     const { email, password, username } = userData;
     try {
@@ -21,28 +23,29 @@ export default class UserService {
       const existingEmailUser = await this.UserRepository.getUserByEmail(
         newUser.email,
       );
+      if (existingEmailUser) {
+        throw new Error(`User with email ${newUser.email} already exists.`);
+      }
+
       const existingUsernameUser = await this.UserRepository.getUserByUsername(
         newUser.username,
       );
-
-      if (existingEmailUser) {
-        throw new DatabaseError();
-      }
-
       if (existingUsernameUser) {
-        throw new DatabaseError();
+        throw new Error(
+          `User with username ${newUser.username} already exists.`,
+        );
       }
 
       const createdUser = await this.UserRepository.createUser(newUser);
 
       if (!createdUser) {
-        throw new DatabaseError();
+        throw new Error('Failed to create user.');
       }
 
       return createdUser;
     } catch (error) {
       if (error instanceof Error && error.name === 'MongoError') {
-        throw new DatabaseError(error);
+        throw new Error(`database Error: ${error.message}`);
       }
       return null;
     }
@@ -52,7 +55,9 @@ export default class UserService {
     email,
   }: Pick<IUser, 'email'>): Promise<UserDocument | null> {
     try {
+      // console.log(email); // 이메일 입력 검사
       const user = await this.UserRepository.getUserByEmail(email);
+
       if (!user) {
         return null;
       }
@@ -133,6 +138,8 @@ export default class UserService {
    */
   async updateUserValidation({ id }: Pick<UserDocument, 'id'>) {
     try {
+      // console.log('id', id); // id 타입 검사
+
       return await this.UserRepository.updateVerified(id);
     } catch (error) {
       throw new Error(`유저 인증 중 오류 발생: ${error}`);

@@ -1,4 +1,4 @@
-import { IUser, UserDocument } from '@/models';
+import { IUser, OTP, UserDocument } from '@/models';
 import { Model } from 'mongoose';
 
 export default class MongoDBUserRepository {
@@ -14,7 +14,7 @@ export default class MongoDBUserRepository {
       const savedUser = await user.save();
       return savedUser;
     } catch (error) {
-      console.log(`유저 생성 중 오류 발생: ${error}`);
+      console.error(`유저 생성 중 오류 발생: ${error}`);
       throw new Error(`유저 생성 중 오류 발생: ${error}`);
     }
   }
@@ -25,7 +25,7 @@ export default class MongoDBUserRepository {
       const users = await this.UserModel.find();
       return users;
     } catch (error) {
-      console.log(`유저 조회 중 오류 발생: ${error}`);
+      console.error(`유저 조회 중 오류 발생: ${error}`);
       throw new Error(`유저 조회 중 오류 발생: ${error}`);
     }
   }
@@ -38,7 +38,7 @@ export default class MongoDBUserRepository {
    */
   async searchUsers(query: string): Promise<UserDocument[]> {
     try {
-      console.log(query);
+      // console.log(query); // 검색어 검사
       const users = await this.UserModel.find({
         $or: [
           { username: { $regex: query, $options: 'i' } }, // 대소문자 구분 없음
@@ -47,7 +47,7 @@ export default class MongoDBUserRepository {
       });
       return users;
     } catch (error) {
-      console.log(`유저 검색 중 오류 발생: ${error}`);
+      console.error(`유저 검색 중 오류 발생: ${error}`);
       throw new Error(`유저 검색 중 오류 발생: ${error}`);
     }
   }
@@ -55,10 +55,11 @@ export default class MongoDBUserRepository {
   async getUserByEmail(email: string): Promise<UserDocument | null> {
     try {
       const user = await this.UserModel.findOne({ email });
-      return user;
+      // console.log(user); // 유저 반환 검사
+      return user || null;
     } catch (error) {
-      console.log(`Email로 유저 조회 중 오류 발생: ${error}`);
-      throw new Error(`Email로 유저 조회 중 오류 발생: ${error}`);
+      console.log(`Email: ${email}로 유저 조회 중 오류 발생: ${error}`);
+      throw new Error(`Email: ${email}로 유저 조회 중 오류 발생: ${error}`);
     }
   }
 
@@ -67,7 +68,7 @@ export default class MongoDBUserRepository {
       const user = await this.UserModel.findOne({ username });
       return user;
     } catch (error) {
-      console.log(`Username으로 유저 조회 중 오류 발생: ${error}`);
+      console.error(`Username으로 유저 조회 중 오류 발생: ${error}`);
       throw new Error(`Username으로 유저 조회 중 오류 발생: ${error}`);
     }
   }
@@ -80,12 +81,16 @@ export default class MongoDBUserRepository {
    */
   async updateVerified(id: string): Promise<UserDocument | null> {
     try {
-      const user = await this.UserModel.findByIdAndUpdate(id, {
-        $set: { verified: true },
-      });
+      const user = await this.UserModel.findByIdAndUpdate(
+        id,
+        {
+          verified: true,
+        },
+        { new: true }, // 업데이트 이후 내용 반환
+      );
       return user;
     } catch (error) {
-      console.log(`유저 인증 중 오류 발생: ${error}`);
+      console.error(`유저 인증 중 오류 발생: ${error}`);
       throw new Error(`유저 인증 중 오류 발생: ${error}`);
     }
   }
@@ -110,16 +115,17 @@ export default class MongoDBUserRepository {
       );
       return user;
     } catch (error) {
-      console.log(`유저 업데이트 중 오류 발생: ${error}`);
+      console.error(`유저 업데이트 중 오류 발생: ${error}`);
       throw new Error(`유저 업데이트 중 오류 발생: ${error}`);
     }
   }
 
   async deleteUser(userId: string): Promise<void> {
     try {
-      await this.UserModel.findByIdAndDelete(userId);
+      await this.UserModel.findOneAndDelete({ _id: userId });
+      await OTP.deleteMany({ userId }); // CASECADE DELETE
     } catch (error) {
-      console.log(`유저 삭제 중 오류 발생: ${error}`);
+      console.error(`유저 삭제 중 오류 발생: ${error}`);
       throw new Error(`유저 삭제 중 오류 발생: ${error}`);
     }
   }

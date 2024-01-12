@@ -30,7 +30,7 @@ describe('UserRepository/', () => {
   it('getUserByEmail/ should return a user by email', async () => {
     const user = await userRepository.createUser(userData);
     const foundUser = await userRepository.getUserByEmail(userData.email);
-    console.log(foundUser);
+    // console.log(foundUser);
     expect(foundUser?.email).toBe(userData.email);
   });
 

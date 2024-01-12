@@ -1,4 +1,3 @@
-import { preOtpSave } from '@/repositories/otp-repos';
 import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 
 export interface IOtp {
@@ -39,9 +38,6 @@ const otpSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-
-// 만료 시간 추가
-otpSchema.pre('save', preOtpSave);
 
 const OTP = mongoose.model<OtpDocument, OtpModel>('OTP', otpSchema);
 export default OTP;

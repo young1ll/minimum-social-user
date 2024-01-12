@@ -22,11 +22,12 @@ export default class OTPRepository {
    * - userId로 해당하는 otp 검증
    */
   async findRecentOtpById(userId: string): Promise<OtpDocument> {
+    const parsedId = new mongoose.Types.ObjectId(userId);
     try {
       const currentTime = new Date();
       const recentOtp = await this.OtpModel.findOne({
-        userId,
-        createdAt: { $gte: currentTime }, // 현재시간 기준 만료되지 않은 otp
+        userId: parsedId, // userId,
+        // createdAt: { $gte: currentTime }, // 현재시간 기준 만료되지 않은 otp
       })
         .sort({ createdAt: -1 })
         .limit(1);
@@ -49,6 +50,7 @@ export default class OTPRepository {
   async createOTP({ userId, otp }: otpPayloadType): Promise<OtpDocument> {
     try {
       // 만료시간 조정 필요한 경우, entry 에 직접 설정
+      // 만료시간 추가
       const expiresAt = new Date();
       expiresAt.setMinutes(expiresAt.getMinutes() + 10);
 
@@ -58,21 +60,11 @@ export default class OTPRepository {
         expiresAt,
       });
 
-      console.log(otpEntry);
+      // console.log(otpEntry);
       const savedOTP = await otpEntry.save();
       return savedOTP;
     } catch (error) {
       throw new Error(`OTP 생성 중 오류 발생: ${error}`);
     }
   }
-}
-
-// 만료 시간 추가
-export function preOtpSave(this: OtpDocument, next: () => void) {
-  // 현재 시간에서 10분 후를 만료 시간으로 설정
-  const expirationTime = new Date();
-  expirationTime.setMinutes(expirationTime.getMinutes() + 10);
-  this.expiresAt = expirationTime;
-
-  next();
 }

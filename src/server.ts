@@ -3,7 +3,7 @@ import app from './app';
 
 async function startServer() {
   app.listen(config.port, () => {
-    console.log(
+    console.info(
       `[SERVER] ${config.env} | [PORT] ${config.port} | [DATABASE] MONGO:${
         config.database.mongo || 'NONE'
       } | MYSQL: ${config.database.mysql || 'NONE'}`,
