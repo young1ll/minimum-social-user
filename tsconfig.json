@@ -14,9 +14,11 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+    "typeRoots": ["./src/types/", "node_modules/@types"]
   },
   "ts-node": {
+    "files": true,
     "require": ["tsconfig-paths/register"]
   }
 }
