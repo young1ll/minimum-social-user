@@ -14,22 +14,16 @@ const corsOption = {
 app.use(cors(corsOption));
 
 app.use(e.json());
-// app.use(e.urlencoded({ extended: true })); // content-type - application/x-www-form-urlencoded
+app.use(e.urlencoded({ extended: true })); // content-type - application/x-www-form-urlencoded
 
+app.get('/', async (req, res, next) => {
+  return res.send({
+    message: 'minimum-socials auth-server is running well',
+  });
+});
 // routes
 app.use(router);
 
-// app.get('/', (req, res, next) => {
-//   const user = 1;
-//   try {
-//     if (!user) {
-//       return res.send({ message: 'minimum-socials auth-server is running' });
-//     }
-//     throw new Error('Not Found');
-//   } catch (error) {
-//     return next();
-//   }
-// });
 // Error Handler
 app.use(errorHandler);
 

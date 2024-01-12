@@ -10,19 +10,24 @@ if (envFound.error) {
 
 export default {
   env: process.env.NODE_ENV,
-  test: process.env.MAILER_API_PUBLIC,
   port: process.env.PORT || 3000,
-  databaseURL: process.env.DATABASE_URL,
-  mailgun: {
-    adminEmail: process.env.ADMIN_EMAIL,
-    testEmail: process.env.TEST_EMAIL,
-    apiKey: process.env.MAILGUN_API_PRIVATE,
-    domain: process.env.MAILGUN_DOMAIN,
+  database: {
+    mongo: process.env.MONGO_DATABASE_URL,
+    mysql: process.env.MYSQL_DATABASE_URL,
   },
+
   mailer: {
-    host: process.env.MAILER_HOST,
-    user: process.env.MAILER_USER,
-    pass: process.env.MAILER_PORT,
-    from: process.env.MAILER_FROM,
+    adminEmail: process.env.ADMIN_EMAIL,
+    testEmail: process.env.TEST_EMAIL, // !verified email
+
+    mg_apiKey: process.env.MAILGUN_API_PRIVATE,
+    mg_domain: process.env.MAILGUN_DOMAIN,
+
+    nm_service: process.env.MAILER_SERVICE,
+    nm_user: process.env.MAILER_USER,
+    nm_pass: process.env.MAILER_PASS,
+    nm_from: process.env.MAILER_FROM,
   },
 };
+
+export { DB } from './database';

@@ -39,7 +39,7 @@ export default class MailgunService {
   }: MailgunMessageData) {
     try {
       return this.mg.messages.create(domain, {
-        from: config.mailgun.adminEmail,
+        from: config.mailer.adminEmail,
         to: [toEmail],
         subject,
         text: message,

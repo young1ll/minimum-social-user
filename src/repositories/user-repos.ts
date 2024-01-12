@@ -5,7 +5,7 @@ export default class MongoDBUserRepository {
   private UserModel: Model<UserDocument>; // mongoose 모델 저장을 위한 private 변수
 
   constructor(UserModel: Model<UserDocument>) {
-    this.UserModel = UserModel; // 주어진 mongoose 모델을 저장하여 활용
+    this.UserModel = UserModel;
   }
 
   async createUser(userData: IUser): Promise<UserDocument> {
@@ -72,6 +72,30 @@ export default class MongoDBUserRepository {
     }
   }
 
+  /**
+   * ID로 사용자 인증
+   *
+   * @param {string} id - The ID of the user.
+   * @return {Promise<UserDocument | null>} The updated user document, or null if the user was not found.
+   */
+  async updateVerified(id: string): Promise<UserDocument | null> {
+    try {
+      const user = await this.UserModel.findByIdAndUpdate(id, {
+        $set: { verified: true },
+      });
+      return user;
+    } catch (error) {
+      console.log(`유저 인증 중 오류 발생: ${error}`);
+      throw new Error(`유저 인증 중 오류 발생: ${error}`);
+    }
+  }
+
+  /**
+   * // TODO: verifed, password 등 특정 정보 수정 불가
+   * @param userEmail
+   * @param newData
+   * @returns
+   */
   async updateUser(
     userEmail: string,
     newData: Partial<IUser>,

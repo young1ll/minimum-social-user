@@ -3,8 +3,12 @@
  * 사용자 핵심정보만 취급하고, Sequelize 또는 TypedORM으로 연결(예정)
  * UserDetail Model과 연결
  */
-import mongoose, { Document, Model } from 'mongoose';
-import bcrypt from 'bcrypt';
+import mongoose, {
+  CallbackWithoutResultAndOptionalError,
+  Document,
+  Model,
+  Query,
+} from 'mongoose';
 import { defaultHash } from '@/utils/default-hash';
 
 export interface IUser {
@@ -19,47 +23,52 @@ export interface IUser {
 export interface UserDocument extends IUser, Document {}
 export interface UserModel extends Model<UserDocument> {}
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
+const userSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    // nickname: {
+    //   type: String,
+    //   required: true,
+    //   unique: true,
+    // },
+    // phone: {
+    //   type: String,
+    //   unique: true,
+    // },
+    // profileImage: {
+    //   type: String,
+    //   required: true,
+    // },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
   },
-  // nickname: {
-  //   type: String,
-  //   required: true,
-  //   unique: true,
-  // },
-  // phone: {
-  //   type: String,
-  //   unique: true,
-  // },
-  // profileImage: {
-  //   type: String,
-  //   required: true,
-  // },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-});
+  { timestamps: true },
+);
 userSchema.index({ email: 'text', username: 'text' });
 
-userSchema.pre<UserDocument>('save', async function preUserSave(next) {
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this; // Schema
-
-  if (!user.isModified('password')) {
+// 생성, 업데이트 시 pre-hook 실행 #8
+userSchema.pre<UserDocument>('save', async function preFunc(next) {
+  if (!this.isModified('password') || this.isNew) {
     return next();
   }
 
   try {
-    user.password = await defaultHash({ password: user.password });
+    this.password = await defaultHash({ password: this.password });
     return next();
   } catch (err) {
     if (err instanceof Error) {

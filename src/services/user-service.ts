@@ -124,6 +124,21 @@ export default class UserService {
     }
   }
 
+  /**
+   * Updates the validation status of a user.
+   * - 반드시 "id"로 사용자 인증
+   *
+   * @param {Pick<UserDocument, 'id'>} id - The ID of the user to update.
+   * @return {Promise<any>} - A promise that resolves with the updated user.
+   */
+  async updateUserValidation({ id }: Pick<UserDocument, 'id'>) {
+    try {
+      return await this.UserRepository.updateVerified(id);
+    } catch (error) {
+      throw new Error(`유저 인증 중 오류 발생: ${error}`);
+    }
+  }
+
   async updateUserData(userData: Partial<IUser>) {
     const { email, ...updatePayload } = userData;
 

@@ -33,7 +33,6 @@ describe('Userervice', () => {
   it('getUserByEmail / should return a user', async () => {
     await userService.createUser(userData);
     const result = await userService.getUserByEmail({ email: userData.email });
-
     expect(result?.email).toEqual(userData.email);
   });
 

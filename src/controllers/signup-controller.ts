@@ -3,6 +3,7 @@ import InvalidInputError from '@/errors/invalid-error';
 import { UserSignedUpEv } from '@/event';
 import { UserService } from '@/services';
 import MailgunService from '@/services/mailgun-service';
+import NodeMailerService from '@/services/nodemailer-service';
 import OTPService from '@/services/otp-service';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
@@ -11,25 +12,64 @@ import { validationResult } from 'express-validator';
 const otpService = new OTPService();
 const userService = new UserService();
 const mailgunService = new MailgunService({
-  apiKey: config.mailgun.apiKey!,
+  apiKey: config.mailer.mg_apiKey!,
 });
+const nodemailerService = new NodeMailerService();
 
-const sendEmailWithOtp = async (email: string) => {
+const sendMailgunWithOtp = async ({
+  userId,
+  email,
+}: {
+  userId: string;
+  email: string;
+}) => {
   // OTP 생성
-  const otpResponse = await otpService.generateOTP(email);
+  const otpResponse = await otpService.generateOTP({ userId });
   if (!otpResponse) {
     throw new Error('Error generating OTP.');
   }
 
   const welcomeMail = {
-    domain: config.mailgun.domain!,
-    fromEmail: config.mailgun.adminEmail!,
+    domain: config.mailer.mg_domain!,
+    fromEmail: config.mailer.adminEmail!,
     toEmail: email,
     subject: '[minimum-socials] 회원 가입 인증 메일',
-    message: `Your verification code is: ${otpResponse.otp}`,
+    message: `
+    <h1>Welcome!</h1>
+    <h2>OTP를 확인해주세요</h2>
+    <p>Your verification code is: ${otpResponse.otp}</p>
+    <p>제한 시간: 5분</p>
+    `,
   };
   // 이메일 전송
   await mailgunService.sendMailFromAdmin(welcomeMail);
+};
+
+const sendNodemailerWithOtp = async ({
+  userId,
+  email,
+}: {
+  userId: string;
+  email: string;
+}) => {
+  // OTP 생성
+  const otpResponse = await otpService.generateOTP({ userId });
+  if (!otpResponse) {
+    throw new Error('Error generating OTP.');
+  }
+
+  const welcomeMail = {
+    toEmail: email,
+    subject: '[minimum-socials] 회원 가입 인증 메일',
+    html: `
+    <h1>Welcome!</h1>
+    <h2>OTP를 확인해주세요</h2>
+    <p>Your verification code is: ${otpResponse.otp}</p>
+    <p>제한 시간: 5분</p>
+    `,
+  };
+  // 이메일 전송
+  await nodemailerService.sendEmail(welcomeMail);
 };
 
 export const SignUpController = async (req: Request, res: Response) => {
@@ -59,13 +99,20 @@ export const SignUpController = async (req: Request, res: Response) => {
     }
 
     // OTP 생성
-    await sendEmailWithOtp(email);
+    // await sendMailgunWithOtp(email);
+    await sendNodemailerWithOtp({ email, userId: newUser._id });
 
     // Event: 회원 생성 성공
     const signupEvent = new UserSignedUpEv(newUser!);
-    return res
-      .status(signupEvent.getStatusCode())
-      .send(signupEvent.serializeRest());
+    // return res
+    //   .status(signupEvent.getStatusCode())
+    //   .send(signupEvent.serializeRest());
+    return res.status(200).send({
+      _id: newUser._id,
+      email: newUser.email,
+      username: newUser.username,
+      otp: signupEvent.getOtp(),
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: 'Internal server error.' });

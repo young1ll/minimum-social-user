@@ -3,7 +3,7 @@ import MailgunService from '@/services/mailgun-service';
 
 describe('MailgunService/', () => {
   const mailgunService = new MailgunService({
-    apiKey: config.mailgun.apiKey!,
+    apiKey: config.mailer.mg_apiKey!,
   });
   it('constructor/ should construct MailgunService correctly', () => {
     // console.log(mailgunService);
@@ -12,7 +12,7 @@ describe('MailgunService/', () => {
 
   it('sendMailFromAdmin/ should send an email successfully', async () => {
     const data = {
-      domain: config.mailgun.domain!,
+      domain: config.mailer.mg_domain!,
       fromEmail: 'sender@example.com',
       toEmail: 'creativehorn@naver.com',
       subject: 'Test Email',

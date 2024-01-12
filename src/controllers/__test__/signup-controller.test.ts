@@ -1,5 +1,6 @@
 import app from '@/app';
 import config from '@/config';
+import { OTP_ROUTE } from '@/routes/otp';
 import { SIGNUP_ROUTE } from '@/routes/signup';
 import supertest from 'supertest';
 
@@ -36,17 +37,17 @@ describe('SignUpController', () => {
     it('should return 422 when validation fails(invalid password)', async () => {
       const response = await supertest(app).post(SIGNUP_ROUTE).send({
         username: 'username',
-        email: config.mailgun.testEmail!,
+        email: config.mailer.testEmail!,
         password: 'testPassword', // invalid
       });
-      console.log(response.status);
+      // console.log(response.status);
       expect(response.status).toBe(422);
     });
 
     it('should return 422 when validation fails(invalid username)', async () => {
       const response = await supertest(app).post(SIGNUP_ROUTE).send({
         username: '', // invalid
-        email: config.mailgun.testEmail!,
+        email: config.mailer.testEmail!,
         password: 'testPassword@123',
       });
       expect(response.status).toBe(422);
@@ -57,7 +58,7 @@ describe('SignUpController', () => {
     it('should return 201 and hash password before saving', async () => {
       const response = await supertest(app).post(SIGNUP_ROUTE).send({
         username: 'username',
-        email: config.mailgun.testEmail!,
+        email: config.mailer.testEmail!,
         password: 'testPassword@123',
       });
       expect(response.status).toBe(201);
@@ -67,9 +68,27 @@ describe('SignUpController', () => {
     it('should return 201 when signup completes', async () => {
       const response = await supertest(app).post(SIGNUP_ROUTE).send({
         username: 'username',
-        email: config.mailgun.testEmail!,
+        email: config.mailer.testEmail!,
         password: 'testPassword@123',
       });
+      expect(response.status).toBe(201);
+    });
+
+    it('should return 201 when signup completes and verified true', async () => {
+      const response = await supertest(app).post(SIGNUP_ROUTE).send({
+        username: 'username',
+        email: config.mailer.testEmail!,
+        password: 'testPassword@123',
+      });
+
+      const verifyResponse = await supertest(app).post(OTP_ROUTE).send({
+        email: config.mailer.testEmail!,
+        otp: response.body.otp,
+      });
+
+      console.log(response.body.otp);
+      console.log(verifyResponse.body.otp);
+      expect(response.body.otp === verifyResponse.body.otp).toBe(true);
       expect(response.status).toBe(201);
     });
   });

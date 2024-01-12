@@ -13,7 +13,7 @@ export default class OTPService {
   /**
    * Email로 OTP(Time-based One Time Password) 생성.
    */
-  async generateOTP(email: string) {
+  async generateOTP({ userId }: { userId: string }) {
     try {
       const otp = otpGenerator.generate(6, {
         upperCaseAlphabets: false,
@@ -21,24 +21,30 @@ export default class OTPService {
         specialChars: false,
       });
 
-      const otpPayload: otpPayloadType = { email, otp };
+      const otpPayload: otpPayloadType = { userId, otp };
+
       const response = await this.OTPRepository.createOTP(otpPayload);
 
       return response;
     } catch (error) {
-      throw new Error('error occurred while generating OTP');
+      throw new Error(`error occurred while generating OTP ${error}`);
     }
   }
 
-  async verifyOtpByEmail({ email, otp }: otpPayloadType): Promise<boolean> {
+  async getRecentOtpById(userId: string) {
+    const otp = await this.OTPRepository.findRecentOtpById(userId);
+    return otp;
+  }
+
+  async verifyOtpById({ userId, otp }: otpPayloadType) {
     try {
-      const recentOtp = await this.OTPRepository.findRecentOtpByEmail(email!);
+      const recentOtp = await this.OTPRepository.findRecentOtpById(userId);
 
       if (recentOtp && recentOtp.otp === otp) {
-        return true; // 유효한 OTP인 경우
+        return { otp, verified: true }; // 유효한 OTP인 경우
       }
 
-      return false; // 유효하지 않은 OTP인 경우
+      return { verifed: false }; // 유효하지 않은 OTP인 경우
     } catch (error) {
       throw new Error('error occurred while verifying OTP');
     }
