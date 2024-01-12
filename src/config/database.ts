@@ -1,3 +1,4 @@
+import config from '@/config';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 
@@ -15,8 +16,10 @@ export const DB = {
     if (env === 'production') {
       // TODO: 실제 MongoDB 연결 설정
       // mongoInstance = new MongoClient('<production_uri>', { useNewUrlParser: true, useUnifiedTopology: true });
-    } else {
-      // 테스트 및 개발 환경에서는 MongoMemoryServer 사용
+    } else if (env === 'development') {
+      DB.mongourl = config.database.mongo!;
+    } else if (env === 'test') {
+      // 테스트 환경: MongoMemoryServer
       mongoInstance = await MongoMemoryServer.create();
       DB.mongourl = mongoInstance.getUri();
     }
@@ -24,7 +27,7 @@ export const DB = {
     mongoose
       .connect(DB.mongourl)
       .then(() => {
-        console.log('MongoDB Connected');
+        console.info('MongoDB Connected');
       })
       .catch((err) => {
         console.error(err);
@@ -35,7 +38,7 @@ export const DB = {
     if (mongoInstance) {
       await mongoose.disconnect();
       await mongoInstance.stop();
-      console.log('MongoDB Disconnected');
+      console.info('MongoDB Disconnected');
     }
   },
 };
