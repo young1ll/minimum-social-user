@@ -1,7 +1,7 @@
 import config from '@/config';
+import aws from 'aws-sdk';
 
 import { UserService } from '@/services';
-import MailgunService from '@/services/mailgun-service';
 import NodeMailerService from '@/services/nodemailer-service';
 import OTPService from '@/services/otp-service';
 import { Request, Response } from 'express';
@@ -10,9 +10,8 @@ import { validationResult } from 'express-validator';
 // 서비스 등록
 const otpService = new OTPService();
 const userService = new UserService();
-const mailgunService = new MailgunService({
-  apiKey: config.mailer.mg_apiKey!,
-});
+const ddb = new aws.DynamoDB({ apiVersion: '2012-08-10' });
+
 const nodemailerService = new NodeMailerService();
 
 /**
@@ -69,7 +68,7 @@ const sendNodemailerWithOtp = async ({
 
   const welcomeMail = {
     toEmail: email,
-    subject: '[minimum-socials] 회원 가입 인증 메일',
+    subject: '[minimum-social] 회원 가입 인증 메일',
     html: `
     <h1>Welcome!</h1>
     <h2>OTP를 확인해주세요</h2>

@@ -1,4 +1,4 @@
-import config, { DB } from '@/config';
+import config, { DBConfig } from '@/config';
 import app from './app';
 
 async function startServer() {
@@ -13,4 +13,4 @@ async function startServer() {
 
 startServer();
 
-DB.connectWith(config.env as string);
+DBConfig.connectWith(config.env as string);
