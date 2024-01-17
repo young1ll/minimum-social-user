@@ -1,18 +1,13 @@
 import config from '@/config';
+import aws from 'aws-sdk';
 
 import { UserService } from '@/services';
-import MailgunService from '@/services/mailgun-service';
 import NodeMailerService from '@/services/nodemailer-service';
-import OTPService from '@/services/otp-service';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 
 // 서비스 등록
-const otpService = new OTPService();
-const userService = new UserService();
-const mailgunService = new MailgunService({
-  apiKey: config.mailer.mg_apiKey!,
-});
+
 const nodemailerService = new NodeMailerService();
 
 /**
@@ -57,26 +52,25 @@ const sendNodemailerWithOtp = async ({
   email: string;
 }) => {
   // OTP 생성 #3 #10
-  const otpResponse = await otpService.generateOTP({ userId });
-  if (!otpResponse) {
-    throw new Error('Error generating OTP.');
-  }
+  // const otpResponse = await otpService.generateOTP({ userId });
+  // if (!otpResponse) {
+  //   throw new Error('Error generating OTP.');
+  // }
 
-  const encodedToken = Buffer.from(otpResponse.otp).toString('base64');
-  const encodedEmail = Buffer.from(email).toString('base64');
+  // const encodedToken = Buffer.from(otpResponse.otp).toString('base64');
+  // const encodedEmail = Buffer.from(email).toString('base64');
 
-  console.log(otpResponse.expiresAt);
+  // console.log(otpResponse.expiresAt);
 
   const welcomeMail = {
     toEmail: email,
-    subject: '[minimum-socials] 회원 가입 인증 메일',
+    subject: '[minimum-social] 회원 가입 인증 메일',
     html: `
     <h1>Welcome!</h1>
-    <h2>OTP를 확인해주세요</h2>
-    <p>Your verification code is: ${otpResponse.otp}</p>
-    <p><a href="http://localhost:3000/api/auth/verify/${encodedEmail}/${encodedToken}/otp">Click here</a></p>
-    <p>expires: ${otpResponse.expiresAt.toLocaleString()}</p>
-    `,
+    <h2>OTP를 확인해주세요</h2>`,
+    // <p>Your verification code is: ${otpResponse.otp}</p>
+    // <p><a href="http://localhost:3000/api/auth/verify/${encodedEmail}/${encodedToken}/otp">Click here</a></p>
+    // <p>expires: ${otpResponse.expiresAt.toLocaleString()}</p>
   };
   // 이메일 전송
   await nodemailerService.sendEmail(welcomeMail);
@@ -98,31 +92,32 @@ export const SignUpController = async (req: Request, res: Response) => {
   try {
     const { email, password, username } = req.body;
 
-    const existingUser = await userService.getUserByEmail({ email });
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ error: 'User with this email already exists.' });
-    }
+    // const existingUser = await userService.getUserByEmail({ email });
+    // if (existingUser) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: 'User with this email already exists.' });
+    // }
 
-    const newUser = await userService.createUser({
-      email,
-      password,
-      username,
-    });
-    if (!newUser) {
-      return res.status(500).json({ error: 'Error creating user.' });
-    }
+    // const newUser = await userService.createUser({
+    //   email,
+    //   password,
+    //   username,
+    // });
+    // if (!newUser) {
+    //   return res.status(500).json({ error: 'Error creating user.' });
+    // }
 
-    // OTP 생성
-    // await sendMailgunWithOtp(email);
-    await sendNodemailerWithOtp({ email, userId: newUser._id });
+    // // OTP 생성
+    // // await sendMailgunWithOtp(email);
+    // await sendNodemailerWithOtp({ email, userId: newUser._id });
 
-    // Event: 회원 생성 성공
-    return res.status(200).send({
-      user: newUser,
-      // otp: signupEvent.getOtp(),
-    });
+    // // Event: 회원 생성 성공
+    // return res.status(200).send({
+    //   user: newUser,
+    //   // otp: signupEvent.getOtp(),
+    // });
+    return res.status(200).send({});
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error.' });

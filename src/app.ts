@@ -4,16 +4,15 @@ import cors from 'cors';
 import { errorHandler } from '@/middleware';
 import router from '@/routes';
 
-// intializing
-const app = e();
+const app = e(); // init express app
 
 const corsOption = {
   origin: '*',
 };
 
-app.use(cors(corsOption));
+app.use(cors(corsOption)); // cors middleware #11
 
-app.use(e.json());
+app.use(e.json()); // body-parser middleware
 app.use(e.urlencoded({ extended: true })); // content-type - application/x-www-form-urlencoded
 
 app.get('/', async (req, res, next) => {
@@ -21,6 +20,7 @@ app.get('/', async (req, res, next) => {
     message: 'minimum-socials auth-server is running well',
   });
 });
+
 // routes
 app.use(router);
 

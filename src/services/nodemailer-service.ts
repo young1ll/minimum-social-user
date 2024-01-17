@@ -13,10 +13,10 @@ export default class NodeMailerService {
 
   constructor() {
     this.transport = this.mailer.createTransport({
-      service: config.mailer.nm_service!,
+      service: config.nm_service!,
       auth: {
-        user: config.mailer.nm_user!,
-        pass: config.mailer.nm_pass!,
+        user: config.nm_user!,
+        pass: config.nm_pass!,
       },
     });
   }
@@ -32,7 +32,7 @@ export default class NodeMailerService {
   }) {
     this.transport.sendMail({
       to: toEmail,
-      from: config.mailer.adminEmail,
+      from: config.adminEmail,
       subject,
       html,
     });

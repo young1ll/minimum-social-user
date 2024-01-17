@@ -37,6 +37,7 @@ rules:
   comma-dangle:
     - error
     - always-multiline
+  import/no-named-default: off
   import/extensions:
     - error
     - js: never
