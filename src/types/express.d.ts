@@ -2,7 +2,7 @@
 
 declare namespace Express {
   export interface Request {
-    currentUser?: UserDocument;
+    // currentUser?: UserDocument;
     // userRole?: string;
   }
 }

@@ -3,10 +3,10 @@ import mongoose from 'mongoose';
 
 let instance: MongoMemoryServer;
 
-// beforeAll(async () => {
-//   instance = await MongoMemoryServer.create();
-//   await mongoose.connect(instance.getUri());
-// });
+beforeAll(async () => {
+  instance = await MongoMemoryServer.create();
+  await mongoose.connect(instance.getUri());
+});
 
 beforeEach(async () => {
   if (mongoose.connection.readyState !== 1) {

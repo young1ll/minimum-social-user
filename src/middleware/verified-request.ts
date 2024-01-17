@@ -1,8 +1,7 @@
-import { UserDocument } from '@/models';
 import { UserService } from '@/services';
 import { NextFunction, Request, Response } from 'express';
 
-const userService = new UserService();
+const userService = UserService();
 
 /**
  * parameter로 사용자 otp 인증 여부 검사 #4
@@ -16,19 +15,19 @@ export const withIsVerifiedByEmailParam = async (
   next: NextFunction,
 ) => {
   const { userEmail } = req.params;
-  const currentUser = await userService.getUserByEmail({
-    email: userEmail,
+  const currentUser = await userService.findByEmail({
+    sk: userEmail, // TODO: pk => userEmail
   });
   // 사용자 존재 여부
   if (!currentUser) {
     return res.status(404).send({ error: 'User not found.' });
   }
   // 사용자 인증 여부
-  if (currentUser.verified === false) {
-    return res.status(400).send({ error: 'User is not verified.' });
-  }
+  // if (currentUser.verified === false) {
+  //   return res.status(400).send({ error: 'User is not verified.' });
+  // }
 
-  req.currentUser = currentUser;
+  // req.currentUser = currentUser;
   return next();
 };
 
@@ -44,18 +43,18 @@ export const withIsVerifiedByEmailBody = async (
   next: NextFunction,
 ) => {
   const { email } = req.body;
-  const currentUser = await userService.getUserByEmail({
-    email,
+  const currentUser = await userService.findByEmail({
+    sk: email, // TODO: pk => userEmail
   });
   // 사용자 존재 여부
   if (!currentUser) {
     return res.status(404).send({ error: 'User not found.' });
   }
   // 사용자 인증 여부
-  if (currentUser.verified === false) {
-    return res.status(400).send({ error: 'User is not verified.' });
-  }
-  req.currentUser = currentUser;
+  // if (currentUser.verified === false) {
+  //   return res.status(400).send({ error: 'User is not verified.' });
+  // }
+  // req.currentUser = currentUser;
   return next();
 };
 

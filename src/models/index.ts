@@ -1,4 +1,3 @@
-export * from './user-auth';
-export { default as User } from './user-auth';
-export * from './otp';
-export { default as OTP } from './otp';
+/**
+ * 현재, 모델을 정의할 필요가 없습니다.
+ */

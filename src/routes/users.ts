@@ -5,10 +5,13 @@ import {
   usernameValidation,
   withIsVerifiedByEmailParam,
 } from '@/middleware';
-import { USER_ROUTE } from '@/routes/definitions';
+import { USERS_ROUTE, USER_ROUTE } from '@/routes/definitions';
 import { Request, Response, Router } from 'express';
 
 const UserRouter = Router();
+
+// GET ALL USERS
+UserRouter.get(USERS_ROUTE, UserContoller.getUsers);
 
 // TEST UserRouter.get(USER_ROUTE, UserContoller.getUsers); // 전체 사용자 조회: pagenation, filter, sorting
 UserRouter.get(USER_ROUTE, async (req: Request, res: Response) => {
@@ -19,18 +22,16 @@ UserRouter.get(USER_ROUTE, async (req: Request, res: Response) => {
 });
 
 // GET A USER
-UserRouter.get(
-  `${USER_ROUTE}/:userEmail`,
-  withIsVerifiedByEmailParam,
-  UserContoller.getUser,
-);
+UserRouter.get(`${USER_ROUTE}/:userEmail`, UserContoller.getUser);
+
+// CREATE A USER
+UserRouter.post(USER_ROUTE, UserContoller.createUser);
 
 // UPDATE USERNAME
 UserRouter.put(
   `${USER_ROUTE}/:userEmail`,
   [usernameValidation],
   ValidateReturn,
-  withIsVerifiedByEmailParam,
   UserContoller.updateUserName,
 );
 
@@ -39,7 +40,6 @@ UserRouter.put(
   `${USER_ROUTE}/:userEmail/password`,
   [passwordValidation],
   ValidateReturn,
-  withIsVerifiedByEmailParam,
   UserContoller.updateUserPassword,
 );
 
@@ -52,10 +52,6 @@ UserRouter.post(
 );
 
 // DELETE A USER
-UserRouter.delete(
-  `${USER_ROUTE}/:userEmail`,
-  withIsVerifiedByEmailParam,
-  UserContoller.deleteUser,
-); // RESTful Delete
+UserRouter.delete(`${USER_ROUTE}/:userEmail`, UserContoller.deleteUser); // RESTful Delete
 
 export default UserRouter;

@@ -1,16 +1,12 @@
-import config, { DBConfig } from '@/config';
+import config from '@/config';
 import app from './app';
 
 async function startServer() {
   app.listen(config.port, () => {
-    console.info(
-      `[SERVER] ${config.env} | [PORT] ${config.port} | [DATABASE] MONGO:${
-        config.database.mongo || 'NONE'
-      } | MYSQL: ${config.database.mysql || 'NONE'}`,
-    );
+    console.info(`[SERVER] ${config.env} | [PORT] ${config.port}`);
   });
 }
 
 startServer();
 
-DBConfig.connectWith(config.env as string);
+// DBConfig.connectWith(config.env as string);

@@ -1,2 +1,1 @@
-export { default as MongoDBUserRepository } from './user-repos';
-export { default as OTPRepository } from './otp-repos';
+export { default as UserRepository } from './user-repo';
