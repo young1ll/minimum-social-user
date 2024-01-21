@@ -44,3 +44,23 @@ jobs:
               run: |
                   yarn
                   yarn run build
+
+            - name: Zip Server Files
+              run: zip -r user-server.zip ./dist ./scripts ./appspec.yml ./package.json ./.env
+
+            - name: AWS configure Credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ap-northeast-2
+
+            - name: Upload to S3
+              run: aws s2 cp --region ap-northeast-2 ./user-server.zip s3://minimum-social/deploy/
+
+            - name: Deploy with AWS CodeDeploy
+              run: aws deploy create-deployment
+                  --application-name minimum-social
+                  --deployment-config-name CodeDeployDefault.OneAtATime
+                  --deployment-group-name minimum-social
+                  --s3-location bucket=minimum-social-build,bundleType=zip,key=deploy/user-server.zip
