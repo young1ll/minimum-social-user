@@ -1,7 +1,1 @@
-{
-  "[javascript]": {
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2
-  },
-  "typescript.preferences.importModuleSpecifier": "non-relative"
-}
+{ "prettier.printWidth": 100 }

@@ -1,13 +1,19 @@
-import { Config } from '@jest/types';
+/**
+ * For a detailed explanation regarding each configuration property, visit:
+ * https://jestjs.io/docs/configuration
+ */
 
-const config: Config.InitialOptions = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/test/utils/test-env.ts'],
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-  },
-  testTimeout: 60000, // 60 seconds
+import type { Config } from 'jest';
+
+const config: Config = {
+    preset: 'ts-jest',
+    clearMocks: true,
+    collectCoverage: true,
+    verbose: true,
+    coverageDirectory: 'coverage',
+    coveragePathIgnorePatterns: ['/node_modules/'],
+    coverageProvider: 'v8',
+    moduleDirectories: ['node_modules', 'src'],
 };
 
 export default config;
