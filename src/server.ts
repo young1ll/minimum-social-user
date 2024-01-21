@@ -1,12 +1,23 @@
-import config from '@/config';
 import app from './app';
+import db from './utils/dbseed';
 
-async function startServer() {
-  app.listen(config.port, () => {
-    console.info(`[SERVER] ${config.env} | [PORT] ${config.port}`);
-  });
-}
+const PORT = process.env.PORT || 8000;
 
-startServer();
+export const startServer = async () => {
+    app.listen(PORT, () => {
+        console.log(`Listening on port ${PORT}`);
+    });
 
-// DBConfig.connectWith(config.env as string);
+    process.on('uncaughtException', async (error) => {
+        console.log(error);
+        process.exit(1);
+    });
+};
+
+startServer().then(() => {
+    console.log('SERVER IS UP');
+});
+
+db.sequelize.sync({ force: true }).then(() => {
+    console.log('Database synced');
+});
