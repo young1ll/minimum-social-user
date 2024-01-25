@@ -18,6 +18,6 @@ startServer().then(() => {
     console.log('SERVER IS UP');
 });
 
-db.sequelize.sync({ force: true }).then(() => {
+db.sequelize.sync({ alter: true }).then(() => {
     console.log('Database synced');
 });
