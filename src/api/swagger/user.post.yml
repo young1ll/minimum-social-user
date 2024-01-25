@@ -1,0 +1,50 @@
+definitions:
+    CreateUserBodyParams:
+        type: object
+        required:
+            - id
+            - email
+        properties:
+            id:
+                type: string
+                example: 'de73e957-5c64-4a85-ae7e-54ca753fb839'
+                description: Cognito Userpool에 등록된 사용자 ID(Sub).
+            email:
+                type: string
+                example: 'tester@minimum-social.com'
+                description: Cognito Userpool에 등록된 사용자 email.
+    UserResponse:
+        type: object
+        properties:
+            id:
+                type: string
+                example: 'de73e957-5c64-4a85-ae7e-54ca753fb839'
+            email:
+                type: string
+                example: 'tester@minimum-social.com'
+            username:
+                type: string
+                example: 'tester'
+            profileImage:
+                type: string
+                example: 's3://minimum-social.com/de73e957-5c64-4a85-ae7e-54ca753fb839/profile.jpg'
+            bio:
+                type: string
+                example: ''
+            darkmode:
+                type: boolean
+                example: true
+            locale:
+                type: string
+                example: 'Seoul'
+            expired:
+                type: boolean
+                example: false
+            createdAt:
+                type: string
+                format: date
+                example: '2024-01-01T00:00:00Z'
+            updatedAt:
+                type: string
+                format: date
+                example: '2024-01-01T00:00:00Z'

@@ -1,5 +1,4 @@
 import app from './app';
-import db from './utils/dbseed';
 
 const PORT = process.env.PORT || 8000;
 
@@ -16,8 +15,4 @@ export const startServer = async () => {
 
 startServer().then(() => {
     console.log('SERVER IS UP');
-});
-
-db.sequelize.sync({ force: true }).then(() => {
-    console.log('Database synced');
 });
