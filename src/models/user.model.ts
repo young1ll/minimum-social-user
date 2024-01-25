@@ -1,5 +1,5 @@
 import { DataTypes, Optional } from 'sequelize';
-import db from '@/utils/dbseed';
+import db from '.';
 
 export interface UserAttributes {
     id: string;

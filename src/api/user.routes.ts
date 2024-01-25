@@ -12,7 +12,30 @@ import {
 const router = e.Router();
 export const userService = new UserService(new UserRepository());
 
-// POST /user - Create a User
+/**
+ * @swagger
+ * /user:
+ *   post:
+ *     tags: [User]
+ *     summary: 새로운 사용자 생성(회원가입)
+ *     description: minimum-social의 회원가입은 **AWS Cognito**에 의존합니다. post `/user` 엔드포인트로 새로운 사용자를 생성할 수 있지만, Cognito Userpool에 등록되어 있지 않으면 로그인할 수 없습니다.
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         description: Create Topic
+ *         schema:
+ *           $ref: '#/definitions/CreateUserBodyParams'
+ *     responses:
+ *       201:
+ *         description: Created
+ *         schema:
+ *           $ref: '#/definitions/UserResponse'
+ *       400:
+ *         description: Bad Request
+ *       500:
+ *         description: Internal Server Error
+ */
 router.post('/user', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { errors, input } = await RequestValidator(CreateUserRequest, req.body);
@@ -32,8 +55,33 @@ router.post('/user', async (req: Request, res: Response, next: NextFunction) => 
     }
 });
 
-// GET /user ?id={id} | ?username={username} - Get a User by Id or Username
-// id 또는 username 하나만 사용가능
+/**
+ * @swagger
+ * /user:
+ *   get:
+ *     tags: [User]
+ *     summary: 단일 사용자정보 가져오기
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         description: 사용자 ID
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: username
+ *         description: 사용자 Username
+ *         schema:
+ *           type: string
+ *     responses:
+ *       201:
+ *         description: Successful response
+ *         schema:
+ *           $ref: '#/definitions/UserResponse'
+ *       400:
+ *         description: Bad Request
+ *       500:
+ *         description: Internal Server Error
+ */
 router.get('/user', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { errors, input } = await RequestValidator(ReadUserRequest, {
@@ -77,9 +125,36 @@ router.get('/user', async (req: Request, res: Response, next: NextFunction) => {
     }
 });
 
-// GET /user - Get all Users
-// TODO: pagenation
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     tags: [User]
+ *     summary: 모든 사용자 조회
+ *     responses:
+ *       201:
+ *         description: Successful response
+ *         schema:
+ *           type: object
+ *           properties:
+ *             data:
+ *               type: array
+ *               items:
+ *                 $ref: '#/definitions/UserResponse'
+ *       201-empty:
+ *         description: No users in the database
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *             data:
+ *               type: array
+ *       500:
+ *         description: Internal Server Error
+ */
 router.get('/users', async (req: Request, res: Response, next: NextFunction) => {
+    // TODO: pagenation
     try {
         const data = await userService.findAllUser();
         if (data?.length === 0) {
@@ -95,8 +170,29 @@ router.get('/users', async (req: Request, res: Response, next: NextFunction) => 
     }
 });
 
-// GET /users/count - Get all Users: COUNT
+/**
+ * @swagger
+ * /users/count:
+ *   get:
+ *     tags: [User]
+ *     summary: 모든 사용자의 수
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         schema:
+ *           type: object
+ *           properties:
+ *             data:
+ *               type: integer
+ *               example: 10  // 실제 데이터에 따라 변경
+ *       500:
+ *         description: Internal Server Error
+ */
 router.get('/users/count', async (req: Request, res: Response, next: NextFunction) => {
+    // TODO: 쿼리로 필터링 추가
+    // darkmode가 true인 사용자의 수...
+    // locale가 en인 사용자의 수...
+    // expired가 true인 사용자의 수...
     try {
         const data = await userService.countUser();
 
@@ -107,9 +203,34 @@ router.get('/users/count', async (req: Request, res: Response, next: NextFunctio
     }
 });
 
-// GET /users/{username} - Get a User by Username: SEARCH
-// TODO: pagenation
+/**
+ * @swagger
+ * /users/{query}:
+ *   get:
+ *     tags: [User]
+ *     summary: Username으로 사용자 검색
+ *     parameters:
+ *       - in: path
+ *         name: query
+ *         description: Username to search for
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         schema:
+ *           type: object
+ *           properties:
+ *             data:
+ *               type: array
+ *               items:
+ *                 $ref: '#/definitions/UserResponse'
+ *       500:
+ *         description: Internal Server Error
+ */
 router.get('/users/:query', async (req: Request, res: Response, next: NextFunction) => {
+    // TODO: pagenation
     try {
         const data = await userService.searchUserByUsername(req.params.query);
 
@@ -120,7 +241,33 @@ router.get('/users/:query', async (req: Request, res: Response, next: NextFuncti
     }
 });
 
-// PUT /user - Update a User by Id
+/**
+ * @swagger
+ * /user/{userId}:
+ *   put:
+ *     tags: [User]
+ *     summary: 사용자 정보 업데이트
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         description: 수정 할 사용자의 ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: body
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/UpdateUserBody'
+ *     responses:
+ *       201:
+ *         description: Successful response
+ *         schema:
+ *           $ref: '#/definitions/UserResponse'
+ *       400:
+ *         description: Bad Request
+ *       500:
+ *         description: Internal Server Error
+ */
 router.put('/user/:userId', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { errors: queryErrors, input: queryInput } = await RequestValidator(UpdateUserQuery, {
@@ -142,7 +289,35 @@ router.put('/user/:userId', async (req: Request, res: Response, next: NextFuncti
     }
 });
 
-// PUT /user - Update a User by Id
+/**
+ * @swagger
+ * /user/{userId}:
+ *   delete:
+ *     tags: [User]
+ *     summary: 단일 사용자 삭제
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         description: 삭제할 사용자의 ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       201:
+ *         description: User deleted successfully
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: User deleted
+ *             data:
+ *               $ref: '#/definitions/UserResponse'
+ *       400:
+ *         description: Bad Request
+ *       500:
+ *         description: Internal Server Error
+ */
 router.delete('/user/:userId', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { errors, input } = await RequestValidator(UpdateUserQuery, {
