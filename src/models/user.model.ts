@@ -16,7 +16,7 @@ export interface UserAttributes {
 
 //payloads for dto
 // export interface UserInput extends Omit<UserAttributes, 'id' | 'email'> {}
-export interface UserInput extends Pick<UserAttributes, 'id' | 'email'> {}
+export interface UserInput extends Pick<UserAttributes, 'id' | 'email' | 'username'> {}
 export interface UserOutput extends Required<UserAttributes> {}
 
 export const User = db.sequelize.define(

@@ -8,6 +8,12 @@ export class UserRepository implements IUserRepo {
         const data = await User.create({ ...input });
         return Promise.resolve(data.get());
     }
+
+    async findOneByEmail(email: string): Promise<UserOutput | null> {
+        const data = await User.findOne({ where: { email } });
+        return data?.toJSON() || null;
+    }
+
     async findOneById(id: string): Promise<UserOutput | null> {
         const data = await User.findOne({ where: { id } });
         // console.log(data);

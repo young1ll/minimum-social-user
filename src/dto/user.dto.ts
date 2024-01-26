@@ -17,6 +17,30 @@ export class CreateUserRequest {
     @IsEmail()
     @IsNotEmpty()
     email: string;
+
+    @IsString()
+    @IsNotEmpty()
+    username: string;
+
+    @IsString()
+    @IsOptional()
+    profileImage?: string;
+
+    @IsString()
+    @IsOptional()
+    bio?: string;
+
+    @IsBoolean()
+    @IsOptional()
+    darkmode?: boolean;
+
+    @IsString()
+    @IsOptional()
+    locale?: string;
+
+    @IsBoolean()
+    @IsOptional()
+    expired?: boolean;
 }
 
 export class ReadUserRequest {
@@ -27,6 +51,10 @@ export class ReadUserRequest {
     @IsString()
     @IsOptional()
     username: string;
+
+    @IsEmail()
+    @IsOptional()
+    email: string;
 }
 
 export class UpdateUserQuery {
