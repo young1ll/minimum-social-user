@@ -121,7 +121,8 @@ router.get('/user', async (req: Request, res: Response, next: NextFunction) => {
         } else if (username) {
             data = await userService.findOneUserByUsername(input.username);
         } else if (email) {
-            data = await userService.findOneUserByEmail(input.email);
+            const decodedEmail = decodeURIComponent(input.email);
+            data = await userService.findOneUserByEmail(decodedEmail);
         }
 
         if (!data) {
