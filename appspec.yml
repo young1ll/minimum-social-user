@@ -2,14 +2,14 @@ version: 0.0
 os: linux
 files:
     - source: .
-      destination: /home/ubuntu/build
+      destination: /home/ubuntu/user-app
       overwrite: yes
 
 permissions:
-    - object: /home/ubuntu
-      pattern: '**'
+    - object: /home/ubuntu/user-app
       owner: ubuntu
       group: ubuntu
+      mode: 755
 
 hooks:
     AfterInstall:

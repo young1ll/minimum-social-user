@@ -3,5 +3,7 @@ REPOSITORY=/home/ubuntu/build
 
 cd $REPOSITORY
 
-sudo /usr/bin/yarn
-sudo /usr/bin/pm2 start dist
+docker stop user-server
+docker rm user-server
+docker build -t user-server .
+docker run -d -p 8080:8080 --name user-server user-server
