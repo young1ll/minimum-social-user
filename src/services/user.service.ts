@@ -2,28 +2,6 @@ import { IUserRepo } from '@/interface/user-repo.interface';
 import { User, UserAttributes, UserInput, UserOutput } from '@/models/user.model';
 import { uniqueUsernameGenerator } from 'unique-username-generator';
 
-const usernameList = [
-    'john',
-    'jane',
-    'bob',
-    'alice',
-    'charlie',
-    'dave',
-    'eva',
-    'frank',
-    'george',
-    'harry',
-    '영일',
-    '민수',
-    '철수',
-    '영희',
-    '민지',
-    '철진',
-    '영혜',
-    '지혜',
-    '영준',
-];
-
 export class UserService {
     private _repository: IUserRepo;
 
@@ -32,31 +10,31 @@ export class UserService {
     }
     async createUser(input: UserInput): Promise<UserOutput> {
         try {
-            const { id, email } = input;
-            if (!id || !email) {
-                throw new Error('user id or email is empty');
+            const { id, email, username, ...rest } = input;
+            if (!id || !email || !username) {
+                const missingFields = [];
+
+                if (!id) {
+                    missingFields.push('id');
+                }
+
+                if (!email) {
+                    missingFields.push('email');
+                }
+
+                if (!username) {
+                    missingFields.push('username');
+                }
+
+                const errorMessage = `User fields (${missingFields.join(', ')}) are empty.`;
+                throw new Error(errorMessage);
             }
-
-            let username: string | undefined = undefined;
-            let isUsernameUnique = false;
-
-            while (!isUsernameUnique) {
-                // 중복 방지
-                username = uniqueUsernameGenerator({
-                    dictionaries: [usernameList],
-                    separator: '-',
-                    randomDigits: 2,
-                });
-
-                isUsernameUnique = !(await this._repository.findOneByUsername(username));
-            }
-            const now = new Date();
 
             const data = {
                 id,
                 email,
-                username, // first time auto generate
-                createdAt: now.toISOString(),
+                username,
+                ...rest,
             };
 
             // console.log(data);
@@ -80,6 +58,20 @@ export class UserService {
             throw error;
         }
     }
+
+    async findOneUserByEmail(email: UserAttributes['email']): Promise<UserOutput | null> {
+        try {
+            if (!email) {
+                throw new Error('email is empty');
+            }
+
+            const data = await this._repository.findOneByEmail(email);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async findOneUserByUsername(username: UserAttributes['username']): Promise<UserOutput | null> {
         try {
             if (!username) {

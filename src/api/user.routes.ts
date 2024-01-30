@@ -44,8 +44,7 @@ router.post('/user', async (req: Request, res: Response, next: NextFunction) => 
         // console.log(input);
         // const data = input;
         const data = await userService.createUser({
-            id: input.id,
-            email: input.email,
+            ...input,
         });
 
         return res.status(201).json({ data });
@@ -61,6 +60,7 @@ router.post('/user', async (req: Request, res: Response, next: NextFunction) => 
  *   get:
  *     tags: [User]
  *     summary: 단일 사용자정보 가져오기
+ *     description: 하나의 parmeter만 사용할 수 있습니다.
  *     parameters:
  *       - in: query
  *         name: id
@@ -70,6 +70,11 @@ router.post('/user', async (req: Request, res: Response, next: NextFunction) => 
  *       - in: query
  *         name: username
  *         description: 사용자 Username
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: email
+ *         description: 사용자 Email
  *         schema:
  *           type: string
  *     responses:
@@ -87,19 +92,24 @@ router.get('/user', async (req: Request, res: Response, next: NextFunction) => {
         const { errors, input } = await RequestValidator(ReadUserRequest, {
             id: req.query.id || null,
             username: req.query.username || null,
+            email: req.query.email || null,
         });
         if (errors) return res.status(400).json({ errors });
 
-        const { id, username } = input;
-        if (!id && !username) {
+        const { id, username, email } = input;
+
+        // 최소 하나는 필수
+        if (!(id || username || email)) {
             return res.status(400).json({
-                message: 'At least one of id or username is required',
+                message: 'At least one of id, username, or email is required',
                 data: {},
             });
         }
-        if (id && username) {
+
+        // 중복 선택 방지
+        if ((id && (username || email)) || (username && email)) {
             return res.status(400).json({
-                message: 'Only one of id or username is allowed',
+                message: 'Only one of id, username, or email is allowed',
                 data: {},
             });
         }
@@ -108,16 +118,17 @@ router.get('/user', async (req: Request, res: Response, next: NextFunction) => {
 
         if (id) {
             data = await userService.findOneUserById(input.id);
-
-            if (!data) {
-                return res.status(201).json({ message: 'User not found', data: {} });
-            }
-        } else {
+        } else if (username) {
             data = await userService.findOneUserByUsername(input.username);
-            if (!data) {
-                return res.status(201).json({ message: 'User not found', data: {} });
-            }
+        } else if (email) {
+            const decodedEmail = decodeURIComponent(input.email);
+            data = await userService.findOneUserByEmail(decodedEmail);
         }
+
+        if (!data) {
+            return res.status(201).json({ message: 'User not found', data: {} });
+        }
+
         return res.status(201).json({ data });
     } catch (error) {
         const err = error as Error;

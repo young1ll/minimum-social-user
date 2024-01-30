@@ -4,6 +4,7 @@ import { User, UserAttributes, UserInput, UserOutput } from '@/models/user.model
 export interface IUserRepo {
     create(user: UserInput): Promise<UserOutput>;
     findOneById(id: string): Promise<UserOutput | null>;
+    findOneByEmail(email: string): Promise<UserOutput | null>;
     findOneByUsername(username: string): Promise<UserOutput | null>;
     findAll(): Promise<UserOutput[] | null>;
 
