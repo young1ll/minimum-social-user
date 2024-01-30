@@ -62,5 +62,5 @@ jobs:
               run: aws deploy create-deployment
                   --application-name minimum-social
                   --deployment-config-name CodeDeployDefault.OneAtATime
-                  --deployment-group-name minimum-social
+                  --deployment-group-name minimum-social-servcie
                   --s3-location bucket=minimum-social-build,bundleType=zip,key=deploy/user-server.zip
