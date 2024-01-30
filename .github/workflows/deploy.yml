@@ -56,7 +56,7 @@ jobs:
                   aws-region: ap-northeast-2
 
             - name: Upload to S3
-              run: aws s2 cp --region ap-northeast-2 user-server.zip s3://minimum-social/deploy/
+              run: aws s3 cp --region ap-northeast-2 user-server.zip s3://minimum-social/deploy/
 
             - name: Deploy with AWS CodeDeploy
               run: aws deploy create-deployment
