@@ -8,11 +8,11 @@ file_exists_behavior: OVERWRITE
 
 permissions:
     - object: /home/ubuntu/user-app
-      owner: ubuntu
-      group: ubuntu
+      owner: root
+      group: root
       mode: 755
 
 hooks:
     AfterInstall:
-        - location: ./scripts/after-deploy.sh
+        - location: scripts/after-deploy.sh
           runas: root
