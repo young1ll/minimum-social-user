@@ -11,10 +11,7 @@ if docker ps -a | grep -q user-app; then
 fi
 
 # Docker Build
-if docker build -t user-app:latest .; then
-    # Docker Run
-    docker run -d -p 8000:8000 --name user-app user-app:latest
-else
-    echo "Docker build failed."
-    exit 1
-fi
+docker build -t user-app:latest . || { echo 'Docker build failed' ; exit 1; }
+
+# Docker Run
+docker run -d -p 8000:8000 --name user-app user-app:latest || { echo 'Docker run failed' ; exit 1; }
