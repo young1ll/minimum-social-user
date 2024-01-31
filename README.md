@@ -7,3 +7,7 @@ minimum-social 회원 서비스
 | Public IPv4 | `3.39.18.222` |
 | Public DNS | `ec2-3-39-18-222.ap-northeast-2.compute.amazonaws.com` |
 | user-service port | `8000` |
+
+## Swagger
+
+- <https://3.39.18.222:8000/docs>
