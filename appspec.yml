@@ -15,4 +15,4 @@ permissions:
 hooks:
     AfterInstall:
         - location: ./user-app/scripts/after-deploy.sh
-          # runas: ubuntu
+          runas: root
