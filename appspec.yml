@@ -1,13 +1,13 @@
 version: 0
 os: linux
 files:
-    - source: .
+    - source: /
       destination: /home/ubuntu/user-app
-      overwrite: 'yes'
+      overwrite: yes
 permissions:
     - object: /home/ubuntu/user-app
-      owner: root
-      group: root
+      owner: ubuntu
+      group: ubuntu
       mode: 755
 hooks:
     AfterInstall:

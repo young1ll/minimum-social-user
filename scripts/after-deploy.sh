@@ -1,5 +1,6 @@
 #!/bin/bash
-REPOSITORY=/home/ubuntu/build
+REPOSITORY=/home/ubuntu/user-server/build
+echo "> USER-SERVER REPOSITORY: $REPOSITORY"
 
 cd $REPOSITORY
 
