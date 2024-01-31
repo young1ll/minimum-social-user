@@ -1,5 +1,5 @@
 #!/bin/bash
-REPOSITORY=/home/ubuntu/user-app/dist
+REPOSITORY=/home/ubuntu/user-app
 echo "> USER-APP REPOSITORY: $REPOSITORY"
 
 cd $REPOSITORY
