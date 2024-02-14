@@ -46,7 +46,7 @@ jobs:
                   yarn run build
 
             - name: Zip Server Files
-              run: zip -r user-server.zip ./dist ./scripts ./appspec.yml ./package.json ./.env
+              run: zip -r user-server.zip ./dist ./src ./scripts ./Dockerfile ./appspec.yml ./package.json ./yarn.lock ./tsconfig.json ./.env
 
             - name: AWS configure Credentials
               uses: aws-actions/configure-aws-credentials@v1
@@ -62,5 +62,5 @@ jobs:
               run: aws deploy create-deployment
                   --application-name minimum-social
                   --deployment-config-name CodeDeployDefault.OneAtATime
-                  --deployment-group-name minimum-social-servcie
-                  --s3-location bucket=minimum-social-build,bundleType=zip,key=deploy/user-server.zip
+                  --deployment-group-name user-servcie
+                  --s3-location bucket=minimum-social,bundleType=zip,key=deploy/user-server.zip

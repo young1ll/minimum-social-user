@@ -1,18 +1,18 @@
-version: 0.0
+version: 0
 os: linux
 files:
-    - source: .
+    - source: /
       destination: /home/ubuntu/user-app
       overwrite: yes
+file_exists_behavior: OVERWRITE
 
 permissions:
     - object: /home/ubuntu/user-app
-      owner: ubuntu
-      group: ubuntu
+      owner: root
+      group: root
       mode: 755
 
 hooks:
     AfterInstall:
         - location: scripts/after-deploy.sh
-          timeout: 300
-          runas: ubuntu
+          runas: root

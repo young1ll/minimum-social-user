@@ -4,7 +4,7 @@ const options: Options = {
     swaggerDefinition: {
         restapi: '3.0.0',
         info: {
-            title: 'minimum-social Topic API',
+            title: 'minimum-social User API',
             version: '1.0.0',
             description: 'user-server: https://github.com/young1ll/minimum-social-user',
         },

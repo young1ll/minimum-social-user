@@ -290,8 +290,9 @@ router.put('/user/:userId', async (req: Request, res: Response, next: NextFuncti
             req.body
         );
         if (bodyErrors) return res.status(400).json({ errors: bodyErrors });
+        console.log(req.body);
 
-        const data = await userService.updateUser({ id: queryInput.id, body: bodyInput });
+        const data = await userService.updateUser({ id: queryInput.id, body: { ...bodyInput } });
 
         return res.status(201).json({ data });
     } catch (error) {
