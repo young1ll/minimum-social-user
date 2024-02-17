@@ -1,9 +1,11 @@
 # user-service
 
 <center>
+
 <img src="https://d30zekycd4jxe2.cloudfront.net/resources/minimum-social.png" alt="minimum-social-logo" />
 
 <h3>minimum-social user service</h3>
+
 </center>
 
 
